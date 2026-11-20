@@ -1,18 +1,25 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>熬过甲方</title><link rel="stylesheet" href="desk.css?v=deck1"></head>
+<title>熬过甲方</title><link rel="stylesheet" href="desk.css?v=icon1"></head>
 <body><main>
 <header><h1>熬过甲方<span aria-hidden="true">.</span></h1><button id="mode" class="switch">旧版解谜 ↗</button></header>
-<div class="row subtitle"><b id="level"></b><span id="turn"></span></div>
+<div class="row subtitle" id="subtitle"><b id="level"></b><span id="turn"></span></div>
 <section id="arena" aria-label="对战">
-  <div class="fighter foe" id="foe"><div class="row"><h2 id="rival"></h2><b id="foehp"></b></div><progress id="enemyBar" aria-label="甲方血量"></progress><div id="intent" aria-live="polite"></div><b class="pop" id="foePop" aria-hidden="true"></b></div>
-  <div class="fighter player" id="me"><div class="row"><h2>你</h2><b id="myhp"></b></div><progress id="myBar" aria-label="你的血量"></progress><div class="row meta"><span id="pips"></span><small id="piles"></small></div><b class="pop" id="myPop" aria-hidden="true"></b></div>
+  <div id="ladder" aria-hidden="true"></div>
+  <div class="fighter foe" id="foe">
+    <div class="who"><span class="face" id="foeFace"></span><div class="vitals"><div class="row"><b id="rival"></b><b id="foehp"></b></div><div class="bar" id="enemyBar"><i></i></div><div class="tags" id="foeTags"></div></div></div>
+    <div id="intent"></div><b class="pop" id="foePop" aria-hidden="true"></b>
+  </div>
+  <div class="fighter player" id="me">
+    <div class="who"><span class="face">🧑‍💻</span><div class="vitals"><div class="row"><b>你</b><b id="myhp"></b></div><div class="bar" id="myBar"><i></i><s></s></div><div class="tags" id="myTags"></div></div></div>
+    <b class="pop" id="myPop" aria-hidden="true"></b>
+  </div>
 </section>
 <div class="stats" id="oldStats"><span>我的精力 <strong id="energy"></strong> <b id="delta"></b></span><span id="helpers"></span></div>
-<div id="build"></div><section class="desk" id="oldDesk"><div class="row"><h2>甲方工单</h2><small>从左到右生效 →</small></div><div id="deck"></div><div id="burst" aria-hidden="true" hidden></div></section>
+<section class="desk" id="oldDesk"><div class="row"><h2>甲方工单</h2><small>从左到右生效 →</small></div><div id="deck"></div><div id="burst" aria-hidden="true" hidden></div></section>
 <p id="log" role="status"></p><div id="result" role="status" hidden></div>
-<section id="loot" hidden><h2>挑一张牌加入牌堆</h2><p>选完回 8 血，进入下一战。同一张可以重复拿。</p><div id="offers"></div></section>
-<section id="choices"><div class="row"><h2>我的手牌</h2><small id="handhint">点一张出牌</small></div><div id="hand"></div></section>
+<section id="loot" hidden><h2>挑一张 <small>❤️ +8</small></h2><div id="offers"></div></section>
+<section id="choices"><div class="row"><h2 id="handTitle">我的手牌</h2><span id="pips" aria-label="精力"></span><small id="handhint">点一张出牌</small></div><div id="hand"></div></section>
 <footer><button id="action"></button><button id="reset">↺ 重开本局</button></footer>
 <details><summary>玩法说明</summary><p id="rules"></p></details>
-</main><script src="game.js?v=35c0e9c"></script><script src="rogue.js?v=deck1"></script><script src="ui.js?v=deck1"></script></body></html>
+</main><script src="game.js?v=35c0e9c"></script><script src="rogue.js?v=icon1"></script><script src="ui.js?v=icon1"></script></body></html>
