@@ -26,3 +26,12 @@ details{border-top:1px solid #52625c;padding-top:10px}details p{margin-top:7px;c
 @media(prefers-reduced-motion:no-preference){.hand:hover{transform:translateY(-2px)}.hand:active{transform:translateY(2px)}.ticket,#result{animation:arrive .22s ease-out}.pulse{animation:pulse .35s ease-out}@keyframes arrive{from{opacity:.6;transform:translateY(-6px) rotate(-1deg)}}@keyframes pulse{from{filter:brightness(1.8);transform:translateX(3px)}}}
 .hand.armed{background:linear-gradient(120deg,#ffebbf,#f6ce81);border-color:#dc914d;color:#54351b}.armed small{color:#65401d}
 @media(max-height:740px) and (max-width:480px){main{padding-block:14px}section{margin-top:12px}#log{margin-block:9px}.ticket{padding-block:9px}}
+#build{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:8px}#build[hidden]{display:none}
+#build b,#build span{font-size:12px;border:1px solid #96794d;border-radius:4px;padding:3px 7px;color:#ffd493}#build span{color:#c5dfd5;border-color:#587168}
+#loot{padding:14px;background:#242d29;border:1px solid #957f56;border-radius:8px}#loot p{font-size:13px;color:#d4c7ad;margin:4px 0 10px}
+#offers{display:grid;gap:7px}#offers button{display:flex;gap:12px;align-items:center;text-align:left;border:1px solid #b29866;background:linear-gradient(110deg,#443d2d,#2d3129);border-radius:5px;padding:10px 12px;color:#ffdc9d}#offers small{color:#e4e4d4}
+#log.counter{background:#372f21;border-left:4px solid #efb758;padding:8px;border-radius:4px}#build b{background:#3c3022}
+.desk{position:relative}#burst{pointer-events:none;position:absolute;right:6px;top:-2px;transform:rotate(-5deg);background:#ffcb70;color:#402c1c;font-weight:900;box-shadow:2px 2px 0 #754222;padding:2px 8px;border:2px solid #c28343;border-radius:3px}#burst strong{font:900 21px ui-monospace,monospace}
+.desk:has(#burst:not([hidden])) .row small{visibility:hidden}
+.hand.gold{background:linear-gradient(135deg,#fff4bc,#ffa847 64%,#ffe9a1);border:2px solid #ffdc89;box-shadow:0 0 14px #facc6555}
+@media(prefers-reduced-motion:no-preference){.slam{animation:stamp .38s ease-out}.hand.gold{animation:stamp .38s ease-out}@keyframes stamp{0%{scale:1.22;filter:brightness(1.5)}65%{scale:.96}100%{scale:1}}}
