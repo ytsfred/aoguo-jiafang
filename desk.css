@@ -1,0 +1,28 @@
+*{box-sizing:border-box}
+:root{color-scheme:dark;--paper:#f5e5bf;--mint:#aee3ce;--muted:#b4c5c1}
+body{margin:0;min-height:100vh;color:#f5f0df;background:radial-gradient(ellipse at 75% 0%,#464033 0,transparent 42%),repeating-linear-gradient(94deg,transparent 0 6px,#ffffff03 7px 8px),#142124;font:16px/1.45 system-ui,sans-serif}
+main{max-width:680px;margin:auto;padding:clamp(18px,5vh,48px) clamp(14px,4vw,30px)}
+header,.row,.stats,footer{display:flex;align-items:center;justify-content:space-between;gap:10px}
+header{border-bottom:1px solid #88968a66;padding-bottom:10px}
+h1,h2,p{margin:0}h1{font:900 clamp(34px,6vw,52px)/1.2 Georgia,"Songti SC",serif;letter-spacing:.02em}h1 span{color:#f7ab79}h2{font-size:17px}
+button,summary{font:inherit;cursor:pointer}button{min-height:44px;color:inherit}
+button:focus-visible,summary:focus-visible{outline:3px solid #ffbc76;outline-offset:3px}
+.switch,#action{border:1px solid #a8bcaf88;border-radius:6px;background:#293a39;padding:6px 14px}
+.subtitle{margin:14px 0 8px}.subtitle span,small{color:var(--muted);font-size:13px}
+.stats{padding:8px 14px;background:#101c1e;border:1px solid #3e5351;border-radius:8px;color:var(--muted);font-size:14px}
+#energy{font:700 30px/1.2 ui-monospace,monospace;color:var(--mint);vertical-align:middle}#delta{color:#f7ba91}
+section{margin-top:18px}#deck{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ticket{position:relative;background:var(--paper);color:#3b3029;border-left:7px solid #d3694c;border-radius:3px 8px 8px 3px;width:100%;padding:13px 18px;box-shadow:0 4px 0 -1px #a79574,0 6px 10px #0004}
+.ticket:after{content:'急件';position:absolute;right:18px;top:24%;transform:rotate(9deg);border:3px double #b25740;color:#ac4936;padding:2px 7px;font:bold 22px serif;letter-spacing:.12em}
+.ticket strong{display:block;font:900 31px/1.4 "Songti SC",serif}.ticket label{font:700 12px monospace;letter-spacing:.08em;color:#8a4833}
+.queued{font-size:13px;color:#ded3be;background:#303839;border:1px solid #5f6560;border-radius:4px;padding:4px 7px}.queued i{font:12px monospace;color:#efb38b}
+#log{margin:14px 0;padding-left:10px;border-left:2px solid #dbac7d;font-size:14px;min-height:2.9em;color:#dacfb9}
+#log.counter,#result{color:#ffce80;font-weight:bold}#result{padding:15px;background:#3b382b;border:1px solid #a48750;border-radius:5px}
+#hand{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:8px}
+.hand{background:linear-gradient(125deg,#d4ebe0,#b4cfc3);color:#1f3b36;border:0;border-top:4px solid #76b799;border-radius:6px;box-shadow:0 3px 0 #738e81,0 6px 12px #0004;display:flex;flex-direction:column;align-items:start;text-align:left;padding:9px;min-height:106px}
+.hand i{font:700 18px monospace;border:1px solid #77958a;border-radius:4px;padding:0 4px}.hand b{margin:7px 0 2px;font-size:17px}.hand small{color:#354e47;line-height:1.35}
+footer{margin:15px 0}#action{font-weight:700}#reset,summary{background:none;border:0;color:var(--muted);font-size:14px}
+details{border-top:1px solid #52625c;padding-top:10px}details p{margin-top:7px;color:var(--muted);font-size:14px}
+@media(prefers-reduced-motion:no-preference){.hand:hover{transform:translateY(-2px)}.hand:active{transform:translateY(2px)}.ticket,#result{animation:arrive .22s ease-out}.pulse{animation:pulse .35s ease-out}@keyframes arrive{from{opacity:.6;transform:translateY(-6px) rotate(-1deg)}}@keyframes pulse{from{filter:brightness(1.8);transform:translateX(3px)}}}
+.hand.armed{background:linear-gradient(120deg,#ffebbf,#f6ce81);border-color:#dc914d;color:#54351b}.armed small{color:#65401d}
+@media(max-height:740px) and (max-width:480px){main{padding-block:14px}section{margin-top:12px}#log{margin-block:9px}.ticket{padding-block:9px}}

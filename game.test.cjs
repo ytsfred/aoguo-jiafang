@@ -13,3 +13,26 @@ for (const [level, moves, energy, result] of [
   })
   assert.equal(game.result,result)
 }
+
+const { challengeDecks } = require('./game.js')
+assert.ok(challengeDecks?.length >= 10, '挑战需要多种不同的牌序')
+assert.equal(new Set(challengeDecks.map(d => d.join(','))).size, challengeDecks.length)
+function canWin(game) {
+  if (game.result) return game.result === 'win'
+  return [...game.hand, '不出牌'].some(card => {
+    const next = structuredClone(game)
+    play(next, card)
+    return canWin(next)
+  })
+}
+for (let i = 0; i < challengeDecks.length; i++) {
+  const game = start(3, i)
+  assert.ok(canWin(game), game.deck.join(','))
+  while (game.deck[0] !== '再改一版' && !game.result) play(game, '不出牌')
+  if (!game.result && game.deck.length > 1) {
+    const expected = game.deck.slice(2)
+    play(game, '已读不回')
+    assert.deepEqual(game.deck, expected)
+    assert.match(game.last, /反击/)
+  }
+}
