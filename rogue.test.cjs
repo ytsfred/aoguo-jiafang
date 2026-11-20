@@ -1,59 +1,57 @@
 const assert = require('node:assert/strict')
-const {newRun, act, choose} = require('./rogue.js')
-function seeded(seed) {
-  return () => ((seed = (Math.imul(seed,1664525) + 1013904223) >>> 0) / 4294967296)
+const {newRun, act, choose, outcome} = require('./rogue.js')
+const g = newRun(()=>0.25)
+assert.equal(g.hp,24)
+g.intent=5
+g.hand=['攻击','格挡','回血']
+const first=g.enemyHp
+assert.equal(outcome(g,'攻击').damage,4)
+act(g,'攻击')
+assert.equal(g.enemyHp,first-4)
+assert.equal(g.hp,19)
+g.hand=['格挡'];g.intent=5
+act(g,'格挡')
+assert.equal(g.hp,19)
+assert.equal(g.power,3)
+g.hand=['攻击'];g.intent=2
+act(g,'攻击')
+assert.equal(g.enemyHp,first-11)
+assert.equal(g.power,0)
+for(let stage=1;stage<=4;stage++){
+  g.hand=['攻击'];g.enemyHp=2;g.intent=8
+  const hp=g.hp
+  act(g,'攻击')
+  assert.equal(g.hp,hp)
+  if(stage===4){assert.equal(g.result,'win');break}
+  assert.equal(g.result,'loot')
+  assert.equal(new Set(g.offers).size,3)
+  const key=g.offers[0], rank=g.perks[key]||0
+  choose(g,key)
+  assert.equal(g.perks[key],rank+1)
+  assert.equal(g.stage,stage+1)
 }
-const g = newRun(seeded(1))
-assert.equal(g.stage,1)
-assert.equal(g.hand.length,3)
-g.hand = ['抄送全员','拍板结案','下班了']
-g.deck = Array(7).fill('再改一版')
-act(g,'抄送全员')
-assert.equal(g.deck.length,7)
-assert.equal(g.hand.length,3)
-assert.equal(g.charge,1)
-act(g,'拍板结案')
-assert.equal(g.deck.length,4)
-assert.equal(g.energy,12)
-assert.equal(g.charge,0)
-for (let stage = 1; stage <= 4; stage++) {
-  g.hand = ['拍板结案']
-  g.deck = ['终审驳回']
-  act(g,'拍板结案')
-  if(stage < 4) {
-    assert.equal(g.result,'loot')
-    assert.equal(new Set(g.offers).size,3)
-    const prize = g.offers[0]
-    const before = g.perks[prize] || 0
-    choose(g,prize)
-    assert.equal(g.perks[prize],before+1)
-    assert.equal(g.stage,stage+1)
-  } else assert.equal(g.result,'win')
-}
-const runs = Array.from({length:30},(_,i)=>newRun(seeded(i+1)))
-assert.ok(new Set(runs.map(r=>r.hand.join())).size > 3)
-assert.ok(new Set(runs.map(r=>r.deck.join())).size > 3)
-const combo = newRun(seeded(7))
-combo.deck = Array(8).fill('明早要')
-combo.hand = ['拍板结案','下班了','全员静音']
-combo.charge = 2
-act(combo,'拍板结案')
-assert.ok(combo.hand.includes('老板特批'), '单场首次连退三单奖励特批牌')
-act(combo,'老板特批')
-assert.equal(combo.result,'loot')
-assert.ok(!combo.discard.includes('老板特批'))
-const perks = newRun(seeded(8))
-perks.perks = {'带薪休假':1,'双倍浓缩':1,'自动回复':2}
-perks.hand = ['下班了','已读不回','全员静音']
-perks.deck = Array(6).fill('推翻重做')
-act(perks,'下班了')
-assert.equal(perks.energy,18)
-assert.equal(perks.deck.length,5)
-act(perks,'已读不回')
-assert.equal(perks.deck.length,1)
-const exhausted = newRun(seeded(9))
-exhausted.deck = ['拉个群']
-exhausted.energy = 1
-act(exhausted,'不出牌')
-assert.equal(exhausted.result,'lose')
-assert.deepEqual(exhausted.offers,[])
+const dying=newRun()
+dying.hp=1;dying.intent=4;dying.hand=['攻击']
+act(dying,'攻击')
+assert.equal(dying.result,'lose')
+const heal=newRun()
+heal.hp=23;heal.hand=['回血'];heal.intent=2
+act(heal,'回血')
+assert.equal(heal.hp,22)
+const fighter=newRun()
+fighter.hand=['格挡反击','吸血攻击']
+fighter.intent=8
+fighter.perks={'反击':1,'铁壁':1,'强攻':1}
+fighter.power=2
+const prediction=outcome(fighter,'格挡反击')
+act(fighter,'格挡反击')
+assert.equal(fighter.hp,21)
+assert.equal(fighter.enemyHp,6)
+assert.equal(fighter.power,6)
+assert.equal(fighter.hp,prediction.hp)
+fighter.hand=['吸血攻击']
+act(fighter,'吸血攻击')
+assert.equal(fighter.result,'loot')
+assert.equal(fighter.hp,23)
+choose(fighter,fighter.offers[0])
+assert.equal(fighter.hp,24)

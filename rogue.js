@@ -1,110 +1,68 @@
-const nights = ['临时改稿','跨部门会签','通宵提案','董事会终审']
-const hits = {'再改一版':3,'明早要':2,'推翻重做':5,'终审驳回':7,'拉个群':0}
+const rivals = ['项目对接人','项目经理','部门总监','终审甲方']
 const prizes = {
-  '红头印章':'「拍板结案」多清 1 单',
-  '一键群发':'每张「抄送全员」多攒 1 层连击',
-  '自动回复':'「已读不回」多退 1 单',
-  '带薪休假':'「下班了」结算前先清 1 单',
-  '双倍浓缩':'「下班了」额外回复 3 精力',
-  '会议纪要':'每场开局自带 2 层连击'
+  '强攻':'每张攻击牌多打 2 血',
+  '铁壁':'每张格挡牌多挡 2 点伤害',
+  '反击':'格挡后，下次攻击额外再加 3',
+  '急救':'回血牌多回 3 血',
+  '先手':'每场第一张攻击牌多打 5 血'
 }
-const officeCards = ['拍板结案','拍板结案','已读不回','已读不回','抄送全员','抄送全员','下班了','下班了','全员静音']
-function shuffled(cards,random) {
-  const out = [...cards]
-  for(let i=out.length-1;i>0;i--) {
-    const j = Math.floor(random()*(i+1))
-    ;[out[i],out[j]] = [out[j],out[i]]
-  }
-  return out
+const pick = (items,random) => items[Math.floor(random()*items.length)]
+function deal(g) {
+  g.intent = pick([1,2,5],g.random)+g.stage
+  g.hand = ['攻击',pick(['格挡','格挡','回血'],g.random),pick(['重击','吸血攻击','格挡反击'],g.random)]
 }
-function draw(g) {
-  if(!g.pile.length) {
-    g.pile = shuffled(g.discard,g.random)
-    g.discard = []
-  }
-  if(g.pile.length) g.hand.push(g.pile.pop())
-}
-function beginNight(g) {
-  const pool = ['再改一版','再改一版','明早要','拉个群','明早要']
-  for(let i=1;i<g.stage;i++) pool.push('推翻重做','拉个群')
-  g.deck = shuffled(pool,g.random)
-  if(g.stage===4) g.deck.push('终审驳回','终审驳回')
-  g.pile = shuffled(officeCards,g.random)
-  g.discard = []
-  g.hand = []
-  while(g.hand.length<3) draw(g)
-  Object.assign(g,{helpers:0,charge:2*(g.perks['会议纪要']||0),played:0,burst:0,bonusUsed:false,result:'',offers:[],last:''})
+function beginFight(g) {
+  g.enemyMax=12+6*(g.stage-1)
+  g.enemyHp=g.enemyMax
+  g.power=5*(g.perks['先手']||0)
+  Object.assign(g,{played:0,result:'',offers:[],last:''})
+  deal(g)
 }
 function newRun(random=Math.random) {
-  const g = {rogue:true,stage:1,energy:12,perks:{},random}
-  beginNight(g)
+  const g={rogue:true,stage:1,hp:24,maxHp:24,perks:{},random}
+  beginFight(g)
   return g
 }
-function strength(g,key) { return g.perks[key] || 0 }
-function clears(g,card) {
-  if(card==='老板特批') return 4
-  if(card==='拍板结案') return 2+g.charge+strength(g,'红头印章')
-  if(card==='已读不回') return 1+Number(hits[g.deck[0]]>=3)+strength(g,'自动回复')
-  if(card==='下班了') return strength(g,'带薪休假')
-  return 0
-}
-function cardHint(g,card) {
-  if(card==='老板特批') return '一次性金卡 · 直接清 4 单'
-  if(card==='抄送全员') return '免费抽 1 张 · 连击 +'+(1+strength(g,'一键群发'))
-  if(card==='下班了') return '回 '+(3+3*strength(g,'双倍浓缩'))+' 精力'+(clears(g,card)?' · 清 '+clears(g,card)+' 单':'')
-  if(card==='全员静音') return '清空小弟 · 挡本单'
-  return (card==='拍板结案'?'消耗连击':'挡重击可反制')+' · 清 '+Math.min(g.deck.length,clears(g,card))+' 单'
+// The preview and the actual turn share the same calculation.
+function outcome(g,card) {
+  const strike = {'攻击':4,'重击':7,'吸血攻击':3,'格挡反击':2}[card]||0
+  const guard = card==='格挡'||card==='格挡反击'
+  const damage = strike ? strike+2*(g.perks['强攻']||0)+g.power : 0
+  const block = guard ? (card==='格挡'?6:3)+2*(g.perks['铁壁']||0) : 0
+  const heal = card==='回血'?6+3*(g.perks['急救']||0):card==='吸血攻击'?2:0
+  const enemyHp=Math.max(0,g.enemyHp-damage)
+  const incoming=enemyHp ? Math.max(0,g.intent-block) : 0
+  const hp=Math.max(0,Math.min(g.maxHp,g.hp+heal)-incoming)
+  const bonus=guard?3+3*(g.perks['反击']||0):0
+  return {damage,block,heal,enemyHp,incoming,hp,bonus,power:(strike?0:g.power)+bonus}
 }
 function act(g,card) {
-  if(g.result) return
-  if(card!=='不出牌') {
-    const i=g.hand.indexOf(card)
-    if(i<0) return
-    g.hand.splice(i,1)
-    if(card!=='老板特批') g.discard.push(card)
-  }
-  g.burst=0
-  if(card==='抄送全员') {
-    g.charge+=1+strength(g,'一键群发')
-    draw(g)
-    g.last='免费连打！抽到「'+g.hand.at(-1)+'」，连击 ×'+g.charge+'。甲方还没动。'
-    return
-  }
-  const current=g.deck[0]
-  const count=clears(g,card)
-  if(card==='拍板结案') g.charge=0
-  if(card==='下班了') g.energy+=3+3*strength(g,'双倍浓缩')
-  if(card==='全员静音') g.helpers=0
-  const removed=g.deck.splice(0,card==='全员静音'?1:count)
-  g.burst=removed.length
-  if(!removed.length) {
-    g.deck.shift()
-    if(current==='拉个群') g.helpers++
-    g.energy-=hits[current]
-  }
-  const pressure=g.stage>=3?1:0
-  g.energy=Math.max(0,g.energy-g.helpers-pressure)
+  if(g.result || !g.hand.includes(card)) return
+  const turn=outcome(g,card)
+  const actualDamage=g.enemyHp-turn.enemyHp
+  const restored=Math.min(turn.heal,g.maxHp-g.hp)
+  Object.assign(g,{hp:turn.hp,enemyHp:turn.enemyHp,power:turn.power})
   g.played++
-  g.last=removed.length ? card+'！连退 '+removed.length+' 单 · '+removed.join('、') : card+' · '+current+' 生效'
-  if(g.helpers+pressure) g.last+=' · 持续扣 '+(g.helpers+pressure)+' 精力'
-  if(!g.energy) g.result='lose'
-  else if(!g.deck.length) {
+  const report=[card]
+  if(actualDamage) report.push('甲方掉 '+actualDamage+' 血')
+  if(turn.heal) report.push(restored?'你回 '+restored+' 血':'你的血量已满')
+  if(!g.enemyHp) report.push('击倒！甲方没能还手')
+  else report.push(turn.incoming?'你掉 '+turn.incoming+' 血':'你挡住了全部伤害')
+  g.last=report.join(' · ')
+  if(!g.enemyHp) {
     g.result=g.stage===4?'win':'loot'
-    if(g.result==='loot') g.offers=shuffled(Object.keys(prizes),g.random).slice(0,3)
-  } else if (g.burst>=3 && !g.bonusUsed) {
-    g.bonusUsed=true
-    g.hand.push('老板特批')
-    g.last+=' · 爆出金卡「老板特批」！'
-  } else {
-    const oldSize=g.hand.length
-    while(g.hand.length<3) draw(g)
-    if(g.hand.length>oldSize) g.last+=' · 抽到「'+g.hand.at(-1)+'」'
-  }
+    const pool=Object.keys(prizes)
+    while(g.result==='loot' && g.offers.length<3) {
+      g.offers.push(pool.splice(Math.floor(g.random()*pool.length),1)[0])
+    }
+  } else if(!g.hp) g.result='lose'
+  else deal(g)
 }
 function choose(g,key) {
   if(g.result!=='loot'||!g.offers.includes(key)) return
-  g.perks[key]=strength(g,key)+1
+  g.perks[key]=(g.perks[key]||0)+1
   g.stage++
-  beginNight(g)
+  g.hp=Math.min(g.maxHp,g.hp+5)
+  beginFight(g)
 }
-if(typeof module!=='undefined') module.exports={newRun,act,choose}
+if(typeof module!=='undefined') module.exports={newRun,act,choose,outcome}

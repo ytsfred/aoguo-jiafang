@@ -1,14 +1,18 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>熬过甲方</title><link rel="stylesheet" href="desk.css?v=night1"></head>
+<title>熬过甲方</title><link rel="stylesheet" href="desk.css?v=duel1"></head>
 <body><main>
-<header><h1>熬过甲方<span aria-hidden="true">.</span></h1><button id="mode" class="switch">夜班挑战 ↗</button></header>
+<header><h1>熬过甲方<span aria-hidden="true">.</span></h1><button id="mode" class="switch">旧版解谜 ↗</button></header>
 <div class="row subtitle"><b id="level"></b><span id="turn"></span></div>
-<div class="stats"><span>我的精力 <strong id="energy"></strong> <b id="delta"></b></span><span id="helpers"></span></div>
-<div id="build"></div><section class="desk"><div class="row"><h2>甲方工单</h2><small>从左到右生效 →</small></div><div id="deck"></div><div id="burst" aria-hidden="true" hidden></div></section>
+<section id="arena" aria-label="对战">
+  <div class="fighter foe"><div class="row"><h2 id="rival"></h2><b id="foehp"></b></div><progress id="enemyBar" aria-label="甲方血量"></progress><p id="intent"></p></div>
+  <div class="fighter player"><div class="row"><h2>你</h2><b id="myhp"></b></div><progress id="myBar" aria-label="你的血量"></progress></div>
+</section>
+<div class="stats" id="oldStats"><span>我的精力 <strong id="energy"></strong> <b id="delta"></b></span><span id="helpers"></span></div>
+<div id="build"></div><section class="desk" id="oldDesk"><div class="row"><h2>甲方工单</h2><small>从左到右生效 →</small></div><div id="deck"></div><div id="burst" aria-hidden="true" hidden></div></section>
 <p id="log" role="status"></p><div id="result" role="status" hidden></div>
-<section id="loot" hidden><h2>挑一件战利品</h2><p>立即生效，整趟夜班保留。重复拿可叠加。</p><div id="offers"></div></section>
+<section id="loot" hidden><h2>挑一件战利品</h2><p>选一项强化，回 5 血进入下一战。相同强化可以叠加。</p><div id="offers"></div></section>
 <section id="choices"><div class="row"><h2>我的手牌</h2><small id="handhint">点一张出牌</small></div><div id="hand"></div></section>
 <footer><button id="action"></button><button id="reset">↺ 重开本局</button></footer>
-<details><summary>玩法说明</summary><p>教学中每回合可出一张手牌，或留牌跳过。随后甲方最左边的牌生效，每个在场小弟再扣 1 精力。撑到工单清空就赢，精力归零就输。</p><p>夜班肉鸽共四场，精力和战利品跨场保留。每次出牌后随机补到三张，抽完洗回弃牌。「抄送全员」免费连打，连击可留给「拍板结案」一次清多单。每场首次一次清掉至少 3 张、且还有剩余工单时，会抽到一次性金卡「老板特批」，直接清 4 单。第三场起，每回合末额外扣 1 精力。</p></details>
-</main><script src="game.js?v=35c0e9c"></script><script src="rogue.js?v=night1"></script><script src="ui.js?v=night1"></script></body></html>
+<details><summary>玩法说明</summary><p id="rules"></p></details>
+</main><script src="game.js?v=35c0e9c"></script><script src="rogue.js?v=duel1"></script><script src="ui.js?v=duel1"></script></body></html>
